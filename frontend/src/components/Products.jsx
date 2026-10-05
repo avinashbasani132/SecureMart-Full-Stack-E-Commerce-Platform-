@@ -5,8 +5,6 @@ import { useCart } from '../context/CartContext';
 // ── BRANDS ──────────────────────────────────────────────────────────────────
 const BRANDS = ['All', 'CP PLUS', 'Hikvision', 'Dahua', 'Axis', 'EZVIZ', 'TP-Link'];
 
-// ── FULL PRODUCT DATA ────────────────────────────────────────────────────────
-import ALL_PRODUCTS from '../data/products.json';
 // ── BRAND META (logos / taglines shown on cards) ──────────────────────────────
 const BRAND_META = {
   'CP PLUS':   { logo: '/images/logo-cpplus.svg',   tagline: 'India\'s #1 CCTV Brand',        color: '#e53935' },
@@ -20,7 +18,7 @@ const BRAND_META = {
 // ─── COMPONENT ───────────────────────────────────────────────────────────────
 const Products = () => {
   const [selectedBrand,   setSelectedBrand]   = useState(null);
-  const { cart, updateQuantity, addToCart, toggleCart, searchQuery, setSearchQuery, allProducts } = useCart();
+  const { cart, updateQuantity, addToCart, searchQuery, setSearchQuery, allProducts } = useCart();
 
 
 
@@ -47,13 +45,6 @@ const Products = () => {
     return counts;
   }, [allProducts]);
 
-  const openProduct  = (p) => { 
-    setSelectedProduct(p); 
-    setActiveImgIdx(0); 
-    setView360(false);
-    document.body.style.overflow = 'hidden'; 
-  };
-  const closeProduct = ()  => { setSelectedProduct(null); document.body.style.overflow = 'auto'; };
   const goBack       = ()  => { setSelectedBrand(null); };
 
   const brandColors = {
@@ -112,11 +103,19 @@ const Products = () => {
                       e.currentTarget.style.transform = 'translateY(-5px)';
                       e.currentTarget.style.boxShadow = `0 16px 40px rgba(0,0,0,0.13)`;
                       e.currentTarget.style.borderColor = col;
+                      const arrow = e.currentTarget.querySelector('.explore-arrow');
+                      if (arrow) arrow.style.transform = 'translateX(4px)';
+                      const btn = e.currentTarget.querySelector('.explore-btn');
+                      if (btn) { btn.style.background = col; btn.style.color = '#fff'; }
                     }}
                     onMouseLeave={e => {
                       e.currentTarget.style.transform = 'translateY(0)';
                       e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.06)';
                       e.currentTarget.style.borderColor = '#e5e7eb';
+                      const arrow = e.currentTarget.querySelector('.explore-arrow');
+                      if (arrow) arrow.style.transform = 'translateX(0)';
+                      const btn = e.currentTarget.querySelector('.explore-btn');
+                      if (btn) { btn.style.background = `${col}15`; btn.style.color = col; }
                     }}
                   >
                     {/* logo display area */}
@@ -178,15 +177,20 @@ const Products = () => {
                           <span style={{ width:'7px', height:'7px', borderRadius:'50%', background: col, display:'inline-block' }} />
                           {count} products
                         </span>
-                        <span style={{
-                          fontSize: '0.82rem',
+                        <span className="explore-btn" style={{
+                          fontSize: '0.75rem',
                           fontWeight: 700,
                           color: col,
+                          background: `${col}15`,
+                          padding: '0.4rem 0.85rem',
+                          borderRadius: '999px',
                           display: 'flex',
                           alignItems: 'center',
                           gap: '0.25rem',
+                          transition: 'all 0.2s ease',
+                          border: `1px solid ${col}30`,
                         }}>
-                          Explore all →
+                          Explore <span style={{ fontSize: '0.9rem', transition: 'transform 0.2s' }} className="explore-arrow">→</span>
                         </span>
                       </div>
                     </div>

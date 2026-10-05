@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
-import { useAuth } from '../context/AuthContext';
 import { supabase } from '../utils/supabase';
 
 const Cart = () => {
   const { cart, isCartOpen, toggleCart, removeFromCart, updateQuantity, clearCart, customerDetails, setShowCheckoutForm } = useCart();
-  const { user, setShowLoginModal } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [orderSuccess, setOrderSuccess] = useState(false);
@@ -14,10 +12,6 @@ const Cart = () => {
 
   const handleCheckout = () => {
     if (cart.length === 0) return;
-    if (!user) {
-      setShowLoginModal(true);
-      return;
-    }
     setShowCheckoutForm(true);
     toggleCart(); // Close the cart drawer when opening checkout modal
   };

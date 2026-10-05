@@ -116,38 +116,55 @@ const Solutions = () => {
                 onMouseEnter={() => setHovered(index)}
                 onMouseLeave={() => setHovered(null)}
                 style={{
-                  background: '#ffffff',
-                  border: `1.5px solid ${isHovered ? '#ff4a00' : '#e5e7eb'}`,
-                  borderRadius: '16px',
-                  padding: '1.75rem',
+                  background: isHovered ? 'linear-gradient(145deg, #ffffff 0%, #fff8f5 100%)' : '#ffffff',
+                  border: `1px solid ${isHovered ? 'rgba(255,74,0,0.3)' : '#f0f0f0'}`,
+                  borderRadius: '24px',
+                  padding: '2rem',
                   cursor: 'default',
-                  transition: 'all 0.3s ease',
-                  boxShadow: isHovered ? `0 12px 32px rgba(255,74,0,0.08)` : '0 2px 8px rgba(0,0,0,0.04)',
-                  transform: isHovered ? 'translateY(-4px)' : 'translateY(0)',
+                  transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                  boxShadow: isHovered ? `0 20px 40px rgba(255,74,0,0.08)` : '0 4px 15px rgba(0,0,0,0.02)',
+                  transform: isHovered ? 'translateY(-6px)' : 'translateY(0)',
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '0.9rem',
+                  gap: '1.2rem',
+                  position: 'relative',
+                  overflow: 'hidden'
                 }}
               >
+                {/* Subtle background glow effect on hover */}
+                <div style={{
+                  position: 'absolute',
+                  top: '-50px',
+                  right: '-50px',
+                  width: '150px',
+                  height: '150px',
+                  background: 'radial-gradient(circle, rgba(255,74,0,0.08) 0%, transparent 70%)',
+                  borderRadius: '50%',
+                  opacity: isHovered ? 1 : 0,
+                  transition: 'opacity 0.4s',
+                  pointerEvents: 'none'
+                }} />
+
                 {/* Icon + Name row */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                   <div style={{
-                    width: '48px', height: '48px',
-                    borderRadius: '12px',
-                    background: isHovered ? '#ff4a00' : '#f3f4f6',
+                    width: '60px', height: '60px',
+                    borderRadius: '16px',
+                    background: isHovered ? 'linear-gradient(135deg, #ff4a00 0%, #ff7300 100%)' : '#f8fafc',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: '1.5rem',
-                    flexShrink: 0,
-                    transition: 'all 0.3s',
+                    fontSize: '1.8rem',
+                    boxShadow: isHovered ? '0 10px 20px rgba(255,74,0,0.3)' : '0 2px 6px rgba(0,0,0,0.04)',
+                    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                   }}>
                     {sol.icon}
                   </div>
                   <h3 style={{
-                    fontSize: '1.05rem',
+                    fontSize: '1.2rem',
                     fontWeight: 800,
-                    color: '#111827',
+                    color: '#0f172a',
                     margin: 0,
                     lineHeight: 1.3,
+                    fontFamily: 'Outfit, sans-serif'
                   }}>
                     {sol.name}
                   </h3>
@@ -155,9 +172,9 @@ const Solutions = () => {
 
                 {/* Description */}
                 <p style={{
-                  fontSize: '0.83rem',
-                  color: '#6b7280',
-                  lineHeight: 1.65,
+                  fontSize: '0.9rem',
+                  color: '#64748b',
+                  lineHeight: 1.6,
                   margin: 0,
                   flex: 1,
                 }}>
@@ -165,16 +182,15 @@ const Solutions = () => {
                 </p>
 
                 {/* Tags */}
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid #f0f0f0' }}>
                   {sol.tags.map((tag, ti) => (
                     <span key={ti} style={{
-                      fontSize: '0.68rem',
-                      fontWeight: 600,
-                      padding: '0.25rem 0.7rem',
-                      borderRadius: '999px',
-                      background: isHovered ? 'rgba(255,74,0,0.06)' : '#f8f9fa',
-                      color: isHovered ? '#ff4a00' : '#4b5563',
-                      border: `1px solid ${isHovered ? 'rgba(255,74,0,0.2)' : '#e5e7eb'}`,
+                      fontSize: '0.72rem',
+                      fontWeight: 700,
+                      padding: '0.35rem 0.8rem',
+                      borderRadius: '8px',
+                      background: isHovered ? 'rgba(255,74,0,0.1)' : '#f8fafc',
+                      color: isHovered ? '#ea580c' : '#475569',
                       transition: 'all 0.3s',
                     }}>
                       {tag}

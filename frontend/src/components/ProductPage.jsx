@@ -11,7 +11,7 @@ const BRAND_COLORS = {
 };
 
 const ProductPage = ({ model }) => {
-  const { allProducts, cart, updateQuantity, addToCart, toggleCart } = useCart();
+  const { allProducts, cart, updateQuantity, addToCart } = useCart();
   const [activeImgIdx, setActiveImgIdx] = useState(0);
   const [view360, setView360] = useState(false);
 
@@ -125,9 +125,9 @@ const ProductPage = ({ model }) => {
               const qty = cartItem ? cartItem.quantity : 0;
               return qty > 0 ? (
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--accent-color)', borderRadius: '12px', padding: '0.5rem', marginTop: '1rem', width: '100%', maxWidth: '300px' }}>
-                  <button onClick={(e) => updateQuantity(product.model, qty - 1)} style={{ background: 'rgba(255,255,255,0.25)', border: 'none', color: '#fff', fontSize: '1.8rem', fontWeight: 'bold', cursor: 'pointer', width: '48px', height: '48px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>-</button>
+                  <button onClick={() => updateQuantity(product.model, qty - 1)} style={{ background: 'rgba(255,255,255,0.25)', border: 'none', color: '#fff', fontSize: '1.8rem', fontWeight: 'bold', cursor: 'pointer', width: '48px', height: '48px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>-</button>
                   <span style={{ fontWeight: 'bold', color: '#fff', fontSize: '1.2rem' }}>{qty} in cart</span>
-                  <button onClick={(e) => updateQuantity(product.model, qty + 1)} style={{ background: 'rgba(255,255,255,0.25)', border: 'none', color: '#fff', fontSize: '1.8rem', fontWeight: 'bold', cursor: 'pointer', width: '48px', height: '48px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
+                  <button onClick={() => updateQuantity(product.model, qty + 1)} style={{ background: 'rgba(255,255,255,0.25)', border: 'none', color: '#fff', fontSize: '1.8rem', fontWeight: 'bold', cursor: 'pointer', width: '48px', height: '48px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
                 </div>
               ) : (
                 <button 

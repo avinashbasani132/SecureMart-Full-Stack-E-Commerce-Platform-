@@ -191,57 +191,52 @@ const Hero = () => {
               </div>
             </div>
 
-            {/* 2-col service mini-cards */}
-            <div className="service-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            {/* 2-col service mini-cards in a unified sleek panel */}
+            <div className="service-grid" style={{ 
+              background: 'rgba(255, 255, 255, 0.7)',
+              backdropFilter: 'blur(12px)',
+              border: '1px solid rgba(255,255,255,0.8)',
+              borderRadius: '20px',
+              padding: '1.5rem',
+              boxShadow: '0 8px 32px rgba(15,23,42,0.04)',
+              display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem'
+            }}>
               {services.map((s, i) => (
-                <div key={i} style={{
-                  background: '#fff',
-                  border: '1.5px solid #f0f0f0',
-                  borderRadius: '16px',
-                  padding: '1.25rem',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  gap: '0.75rem',
-                  transition: 'all 0.2s',
-                  cursor: 'default',
-                }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = '#ff4a00'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(255,74,0,0.1)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = '#f0f0f0'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.05)'; }}
-                >
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
                   <span style={{
-                    width: '38px', height: '38px', borderRadius: '10px',
-                    background: 'rgba(255,74,0,0.08)',
+                    width: '36px', height: '36px', borderRadius: '50%',
+                    background: '#fff',
+                    boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: '1.1rem', flexShrink: 0,
+                    fontSize: '1rem', flexShrink: 0,
                   }}>{s.icon}</span>
-                  <span style={{ fontSize: '0.82rem', fontWeight: 600, color: '#1e293b', lineHeight: 1.4 }}>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#1e293b', lineHeight: 1.3 }}>
                     {s.label}
                   </span>
                 </div>
               ))}
             </div>
 
-            {/* trust bar */}
+            {/* trust bar - sleek callout style */}
             <div className="trust-bar" style={{
-              background: '#fff',
-              border: '1.5px solid #f0f0f0',
-              borderRadius: '16px',
-              padding: '1rem 1.5rem',
               display: 'flex',
               flexWrap: 'wrap',
               alignItems: 'center',
               gap: '1rem',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+              padding: '1rem 1.25rem',
+              borderLeft: '4px solid #ff4a00',
+              background: 'linear-gradient(90deg, rgba(255,74,0,0.04) 0%, rgba(255,255,255,0) 100%)',
+              borderRadius: '0 16px 16px 0',
+              marginTop: '0.5rem'
             }}>
-              <div style={{ fontSize: '1.4rem' }}>✅</div>
+              <div style={{ fontSize: '1.5rem', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))' }}>✅</div>
               <div>
-                <p style={{ fontSize: '0.82rem', fontWeight: 700, color: '#0f172a', margin: 0 }}>Authorised Dealer & Installer</p>
-                <p style={{ fontSize: '0.75rem', color: '#94a3b8', margin: 0 }}>CP PLUS · Hikvision · Dahua · Axis · EZVIZ · TP-Link</p>
+                <p style={{ fontSize: '0.85rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.2rem 0' }}>Authorised Dealer & Installer</p>
+                <p style={{ fontSize: '0.75rem', color: '#64748b', margin: 0, fontWeight: 500 }}>CP PLUS · Hikvision · Dahua · Axis · EZVIZ · TP-Link</p>
               </div>
               <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
-                <p style={{ fontSize: '0.82rem', fontWeight: 700, color: '#0f172a', margin: 0 }}>📍 Hyderabad</p>
-                <p style={{ fontSize: '0.75rem', color: '#94a3b8', margin: 0 }}>& surrounding areas</p>
+                <p style={{ fontSize: '0.85rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.2rem 0' }}>📍 Hyderabad</p>
+                <p style={{ fontSize: '0.75rem', color: '#64748b', margin: 0, fontWeight: 500 }}>& surrounding areas</p>
               </div>
             </div>
 
@@ -317,12 +312,12 @@ const Hero = () => {
             gap: 1rem !important;
           }
           .service-grid {
-            grid-template-columns: 1fr 1fr !important;
-            gap: 0.5rem !important;
+            grid-template-columns: 1fr !important;
+            gap: 1rem !important;
           }
           .service-grid > div {
-            padding: 0.75rem !important;
-            gap: 0.5rem !important;
+            padding: 0 !important;
+            gap: 0.75rem !important;
           }
           .trust-bar {
             flex-direction: column !important;

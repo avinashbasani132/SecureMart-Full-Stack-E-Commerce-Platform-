@@ -1,116 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { supabase } from '../utils/supabase';
 
 const MyOrders = () => {
-  const { user, loading: authLoading } = useAuth();
   const [activeTab, setActiveTab] = useState('orders'); // 'orders' | 'addresses'
-  
   const [orders, setOrders] = useState([]);
-  const [loadingOrders, setLoadingOrders] = useState(true);
-  
   const [addresses, setAddresses] = useState([]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    
+    // Fetch local orders
+    const localOrders = JSON.parse(localStorage.getItem('cctv_local_orders') || '[]');
+    setOrders(localOrders.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)));
+
+    // Fetch local addresses
+    const localAddresses = JSON.parse(localStorage.getItem('cctv_local_addresses') || '[]');
+    setAddresses(localAddresses);
   }, []);
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      if (!user) return;
-      
-      try {
-        setLoadingOrders(true);
-        // Try to fetch from Supabase
-        const { data, error } = await supabase
-          .from('orders')
-          .select('*')
-          .or(`user_email.eq.${user.email},user_phone.eq.${user.phone}`)
-          .order('created_at', { ascending: false });
-
-        if (error) {
-          throw error;
-        }
-        
-        setOrders(data || []);
-      } catch (err) {
-        console.error("Failed to fetch from Supabase, checking local storage:", err);
-        // Fallback to local storage if Supabase fails
-        const localOrders = JSON.parse(localStorage.getItem('cctv_local_orders') || '[]');
-        const userOrders = localOrders
-          .filter(order => order.user_email === user.email || order.user_phone === user.phone)
-          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-        
-        setOrders(userOrders);
-      } finally {
-        setLoadingOrders(false);
-      }
-    };
-
-    const fetchAddresses = async () => {
-      if (!user) return;
-      try {
-        const { data, error } = await supabase
-          .from('addresses')
-          .select('*')
-          .eq('user_id', user.id);
-        
-        if (!error && data) {
-          setAddresses(data);
-        }
-      } catch (err) {
-        console.error("Failed to fetch addresses:", err);
-      }
-    };
-
-    if (!authLoading) {
-      if (user) {
-        fetchOrders();
-        fetchAddresses();
-      } else {
-        setLoadingOrders(false);
-      }
-    }
-  }, [user, authLoading]);
-
-  const handleDeleteAddress = async (id) => {
+  const handleDeleteAddress = (id) => {
     const confirm = window.confirm("Are you sure you want to delete this address?");
     if (!confirm) return;
 
-    try {
-      const { error } = await supabase
-        .from('addresses')
-        .delete()
-        .eq('id', id);
-
-      if (!error) {
-        setAddresses(addresses.filter(a => a.id !== id));
-      } else {
-        alert("Failed to delete address. Check database policies.");
-      }
-    } catch (err) {
-      console.error(err);
-    }
+    const updatedAddresses = addresses.filter(a => a.id !== id);
+    setAddresses(updatedAddresses);
+    localStorage.setItem('cctv_local_addresses', JSON.stringify(updatedAddresses));
   };
-
-  if (authLoading || loadingOrders) {
-    return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: '80px', background: '#f8f9fc' }}>
-        <div style={{ fontSize: '1.2rem', color: '#64748b', fontWeight: 600 }}>Loading your account...</div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return (
-      <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingTop: '80px', background: '#f8f9fc' }}>
-        <span style={{ fontSize: '4rem', marginBottom: '1rem' }}>🔒</span>
-        <h2 style={{ fontSize: '1.8rem', color: '#0f172a', marginBottom: '0.5rem' }}>Please Log In</h2>
-        <p style={{ color: '#64748b', marginBottom: '2rem' }}>You need to be logged in to view your account.</p>
-        <a href="#home" className="btn btn-primary" style={{ padding: '0.75rem 2rem' }}>Return Home</a>
-      </div>
-    );
-  }
 
   const accentColor = '#ff4a00';
 
@@ -121,10 +35,10 @@ const MyOrders = () => {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
             <h1 style={{ fontSize: '2.2rem', fontWeight: 800, color: '#0f172a', fontFamily: 'Outfit, sans-serif', margin: '0 0 0.5rem 0' }}>
-              My Account
+              My Orders
             </h1>
             <p style={{ margin: 0, color: '#64748b', fontSize: '1rem' }}>
-              Welcome back, <strong style={{ color: '#111827' }}>{user.phone || user.email}</strong>
+              View your local order history and saved addresses.
             </p>
           </div>
           <a href="#home" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)', textDecoration: 'none', fontWeight: 600, background: '#fff', padding: '0.5rem 1rem', borderRadius: '8px', border: '1px solid #e5e7eb', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
@@ -166,7 +80,7 @@ const MyOrders = () => {
             <div style={{ background: '#fff', borderRadius: '16px', padding: '4rem 2rem', textAlign: 'center', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', border: '1px solid #f0f0f0' }}>
               <span style={{ fontSize: '3.5rem', display: 'block', marginBottom: '1rem' }}>🛒</span>
               <h3 style={{ fontSize: '1.4rem', color: '#0f172a', marginBottom: '0.5rem' }}>No orders yet</h3>
-              <p style={{ color: '#64748b', marginBottom: '2rem' }}>Looks like you haven't placed any orders with this account.</p>
+              <p style={{ color: '#64748b', marginBottom: '2rem' }}>Looks like you haven't placed any orders from this device.</p>
               <a href="#products" className="btn btn-primary" style={{ padding: '0.75rem 2rem' }}>Start Shopping</a>
             </div>
           ) : (
@@ -248,7 +162,7 @@ const MyOrders = () => {
             <div style={{ background: '#fff', borderRadius: '16px', padding: '4rem 2rem', textAlign: 'center', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', border: '1px solid #f0f0f0' }}>
               <span style={{ fontSize: '3.5rem', display: 'block', marginBottom: '1rem' }}>📍</span>
               <h3 style={{ fontSize: '1.4rem', color: '#0f172a', marginBottom: '0.5rem' }}>No saved addresses</h3>
-              <p style={{ color: '#64748b', marginBottom: '2rem' }}>Addresses you add during checkout will be saved here.</p>
+              <p style={{ color: '#64748b', marginBottom: '2rem' }}>Addresses you add during checkout will be saved locally.</p>
             </div>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>

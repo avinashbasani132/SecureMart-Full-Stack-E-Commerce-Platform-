@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useCart } from '../context/CartContext';
-import { useAuth } from '../context/AuthContext';
 import { supabase } from '../utils/supabase';
 
 const Field = ({ label, id, type = 'text', value, onChange, placeholder, required, error }) => (
@@ -61,7 +60,6 @@ const CheckoutModal = () => {
     cart, clearCart,
     customerDetails, setCustomerDetails,
   } = useCart();
-  const { user } = useAuth();
 
   const [checkoutStep, setCheckoutStep] = useState('address'); // 'address' | 'review'
   const [savedAddresses, setSavedAddresses] = useState([]);
@@ -80,27 +78,12 @@ const CheckoutModal = () => {
       setCheckoutStep('address');
       document.body.style.overflow = 'hidden';
 
-      // Load saved addresses for user
-      if (user) {
-        const fetchAddresses = async () => {
-          const { data, error } = await supabase
-            .from('addresses')
-            .select('*')
-            .eq('user_id', user.id);
-            
-          if (!error && data) {
-            setSavedAddresses(data);
-            if (data.length > 0) {
-              setIsAddingNew(false);
-              setSelectedAddressId(data[0].id);
-            } else {
-              setIsAddingNew(true);
-            }
-          } else {
-            setIsAddingNew(true);
-          }
-        };
-        fetchAddresses();
+      // Load saved addresses from localStorage
+      const localAddresses = JSON.parse(localStorage.getItem('cctv_local_addresses') || '[]');
+      if (localAddresses.length > 0) {
+        setSavedAddresses(localAddresses);
+        setIsAddingNew(false);
+        setSelectedAddressId(localAddresses[0].id);
       } else {
         setIsAddingNew(true);
       }
@@ -110,7 +93,7 @@ const CheckoutModal = () => {
     return () => {
       document.body.style.overflow = 'auto';
     };
-  }, [showCheckoutForm, user]);
+  }, [showCheckoutForm]);
 
   if (!showCheckoutForm) return null;
 
@@ -148,26 +131,15 @@ const CheckoutModal = () => {
       }
       
       const newAddr = { 
-        ...customerDetails, 
-        user_id: user?.id, 
-        user_phone: user?.phone, 
-        user_email: user?.email 
+        ...customerDetails
       };
       
-      const { data, error } = await supabase
-        .from('addresses')
-        .insert([newAddr])
-        .select();
-
-      if (!error && data && data.length > 0) {
-        setSavedAddresses([...savedAddresses, data[0]]);
-        setSelectedAddressId(data[0].id);
-        setIsAddingNew(false);
-      } else {
-        console.error("Error saving address", error);
-        alert("Failed to save address. Check database policies.");
-        return;
-      }
+      const localAddress = { ...newAddr, id: Date.now() };
+      const updatedAddresses = [...savedAddresses, localAddress];
+      setSavedAddresses(updatedAddresses);
+      localStorage.setItem('cctv_local_addresses', JSON.stringify(updatedAddresses));
+      setSelectedAddressId(localAddress.id);
+      setIsAddingNew(false);
     } else {
       // User selected an existing address
       const selected = savedAddresses.find(a => a.id === selectedAddressId);
@@ -201,9 +173,7 @@ const CheckoutModal = () => {
             customer_name: customerDetails.name, 
             contact_no: customerDetails.phone, 
             address: `${customerDetails.address}, ${customerDetails.city} - ${customerDetails.pincode}`, 
-            items: cart,
-            user_email: user?.email || null,
-            user_phone: user?.phone || null
+            items: cart
           }
         ]);
 
@@ -216,9 +186,7 @@ const CheckoutModal = () => {
           customer_name: customerDetails.name,
           contact_no: customerDetails.phone,
           address: `${customerDetails.address}, ${customerDetails.city} - ${customerDetails.pincode}`,
-          items: cart,
-          user_email: user?.email || null,
-          user_phone: user?.phone || null
+          items: cart
         });
         localStorage.setItem('cctv_local_orders', JSON.stringify(localOrders));
       }
